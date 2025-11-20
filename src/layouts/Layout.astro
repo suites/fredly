@@ -14,6 +14,20 @@ const seo = generateSEO({
   description,
   canonical: Astro.url.href,
 });
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": SITE_TITLE,
+  "url": SITE_URL,
+  "description": seo.description,
+  "author": {
+    "@type": "Person",
+    "name": "yoon.homme"
+  }
+};
+
+const schemaJSON = JSON.stringify(schema);
 ---
 
 <!DOCTYPE html>
@@ -57,21 +71,7 @@ const seo = generateSEO({
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
     
     <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-      {
-        JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": SITE_TITLE,
-          "url": SITE_URL,
-          "description": seo.description,
-          "author": {
-            "@type": "Person",
-            "name": "yoon.homme"
-          }
-        })
-      }
-    </script>
+    <script type="application/ld+json" set:html={schemaJSON} />
   </head>
   
   <body>
