@@ -35,7 +35,7 @@ const parsedEmoji = twemojiParse(emoji);
 
 <style>
   .post-card-wrapper {
-    border-top: solid 1px #313746; /* theme.colors.blackLight */
+    border-top: solid 1px var(--color-bg-secondary);
     width: 100%;
     max-width: 100%;
     overflow: hidden; /* 내용 overflow 방지 */
@@ -58,7 +58,7 @@ const parsedEmoji = twemojiParse(emoji);
   }
   
   .post-card-link:hover {
-    background: #313746; /* theme.colors.blackLight */
+    background: var(--color-bg-secondary);
   }
   
   .post-card-emoji {
@@ -67,7 +67,7 @@ const parsedEmoji = twemojiParse(emoji);
     justify-content: center;
     width: 90px;
     height: 90px;
-    background: #313746; /* theme.colors.blackLight */
+    background: var(--color-bg-secondary);
     border-radius: 8px;
     font-size: 50px;
     flex-shrink: 0;

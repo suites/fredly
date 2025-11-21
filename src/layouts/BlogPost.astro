@@ -32,9 +32,12 @@ const estimatedReadTime = readTime || 5;
 const slug = ('slug' in otherProps ? otherProps.slug : null) || Astro.url.pathname;
 const postUrl = `${SITE_URL}${slug}`;
 const postId = Astro.url.pathname; // identifier로 사용
+
+const heroImage = 'heroImage' in otherProps ? otherProps.heroImage : undefined;
+const ogImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
 ---
 
-<Layout title={title} description={description || ''}>
+<Layout title={title} description={description || ''} image={ogImage}>
   <Header />
   
   <main id="main-content" class="blog-post-layout">
@@ -139,20 +142,20 @@ const postId = Astro.url.pathname; // identifier로 사용
     top: 0;
     left: 0;
     border-right: 20px solid transparent;
-    border-top: 20px solid rgb(33, 36, 45); /* theme.colors.background */
+    border-top: 20px solid var(--color-bg);
   }
   
   .post-content-main::after {
     bottom: 0;
     right: 0;
-    border-bottom: 20px solid rgb(33, 36, 45); /* theme.colors.background */
+    border-bottom: 20px solid var(--color-bg);
     border-left: 20px solid transparent;
   }
   
   /* 히어로 이미지 (Gatsby 원본 스타일) */
   .hero-image {
     position: relative;
-    background: #313746; /* theme.colors.blackLight */
+    background: var(--color-bg-secondary);
     text-align: center;
     background-image: url('/images/svg/others/pattern.svg');
     background-repeat: repeat;
@@ -303,7 +306,7 @@ const postId = Astro.url.pathname; // identifier로 사용
   }
   
   .prose :global(a) {
-    color: #0c9ee4;
+    color: var(--color-primary);
     text-decoration: none;
     transition: all 0.2s ease;
   }
@@ -315,7 +318,7 @@ const postId = Astro.url.pathname; // identifier로 사용
   .prose :global(blockquote) {
     margin: 2.3em 0; /* Gatsby와 동일: em 단위 */
     font-style: italic;
-    background: #f1f4f7; /* theme.colors.whitesmoke - Gatsby와 동일 */
+    background: var(--color-bg-tertiary);
     padding: 1em; /* Gatsby와 동일: em 단위 */
   }
   
@@ -423,7 +426,7 @@ const postId = Astro.url.pathname; // identifier로 사용
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #20a8ea; /* theme.colors.highlight */
+    background: var(--color-highlight);
     color: #fff;
     font-weight: 700;
     font-size: 14px;
@@ -455,7 +458,7 @@ const postId = Astro.url.pathname; // identifier로 사용
   }
   
   .prose :global(th) {
-    background-color: #20a8ea; /* theme.colors.highlight - Gatsby와 동일 */
+    background-color: var(--color-highlight);
     color: #fff;
     padding: 10px 12px; /* Gatsby와 동일 */
     text-align: center;
@@ -471,8 +474,8 @@ const postId = Astro.url.pathname; // identifier로 사용
   }
   
   .prose :global(td) {
-    background-color: #f1f4f7; /* theme.colors.whitesmoke - Gatsby와 동일 */
-    color: #313746; /* theme.colors.blackLight - Gatsby와 동일 */
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-bg-secondary);
     padding: 10px 12px; /* Gatsby와 동일 */
   }
   

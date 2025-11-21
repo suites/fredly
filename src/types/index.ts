@@ -6,8 +6,9 @@ export type BlogPostData = BlogPost['data'];
 
 // 컴포넌트 Props 타입들
 export interface LayoutProps {
-  title?: string;
-  description?: string;
+  title?: string | undefined;
+  description?: string | undefined;
+  image?: string | undefined;
 }
 
 export interface BlogPostLayoutProps extends BlogPostData {
