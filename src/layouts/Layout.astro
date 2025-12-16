@@ -4,16 +4,19 @@ import { generateSEO } from '@/utils/seo';
 import { SITE_TITLE, SITE_URL } from '@/consts';
 import '@/styles/global.css';
 
-export interface Props extends LayoutProps {}
+export interface Props extends LayoutProps {
+  canonical?: string;
+  robots?: string;
+}
 
-const { title, description, image } = Astro.props;
+const { title, description, image, canonical, robots } = Astro.props;
 
 // SEO 메타데이터 생성
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const seo = generateSEO({
   title,
   description,
-  canonical: canonicalURL.href,
+  canonical,
   image,
 });
 
@@ -66,7 +69,7 @@ const schemaJSON = JSON.stringify(schema);
     <meta name="twitter:image" content={seo.image} />
     
     <!-- Additional Meta -->
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={robots || 'index, follow'} />
     <meta name="author" content="yoon.homme" />
     
     <!-- KaTeX CSS for math rendering -->
