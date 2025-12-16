@@ -1,5 +1,5 @@
 ---
-import { AUTHOR_NAME, SITE_DESCRIPTION, SOCIAL_LINKS, RESUME_URL } from '@/consts';
+import { AUTHOR_NAME, SITE_DESCRIPTION, SOCIAL_LINKS, RESUME_URL, AUTHOR_EMAIL } from '@/consts';
 ---
 
 <div class="bio-wrapper">
@@ -23,7 +23,7 @@ import { AUTHOR_NAME, SITE_DESCRIPTION, SOCIAL_LINKS, RESUME_URL } from '@/const
           <path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"/>
         </svg>
       </a>
-      <a href={`mailto:yoon.homme@gmail.com`} class="bio-link">
+      <a href={`mailto:${AUTHOR_EMAIL}`} class="bio-link">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFF">
           <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,5.11 21.1,4 20,4Z"/>
         </svg>
