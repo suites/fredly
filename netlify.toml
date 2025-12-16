@@ -34,3 +34,8 @@
   to = "/$1/"
   status = 301
   force = true
+
+[[plugins]]
+  package = "netlify-plugin-cloudflare-cache-purge"
+  [plugins.inputs]
+    purge_everything = true
