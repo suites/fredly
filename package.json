@@ -22,5 +22,8 @@
     "remark-math": "^6.0.0",
     "sharp": "^0.34.2",
     "twemoji": "^14.0.2"
+  },
+  "devDependencies": {
+    "netlify-purge-cloudflare-on-deploy": "^1.2.0"
   }
 }

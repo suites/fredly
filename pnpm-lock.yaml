@@ -35,6 +35,10 @@ importers:
       twemoji:
         specifier: ^14.0.2
         version: 14.0.2
+    devDependencies:
+      netlify-purge-cloudflare-on-deploy:
+        specifier: ^1.2.0
+        version: 1.2.0
 
 packages:
 
@@ -1306,6 +1310,9 @@ packages:
     resolution: {integrity: sha512-Z4SmBUweYa09+o6pG+eASabEpP6QkQ70yHj351pQoEXIs8uHbaU2DWVmzBANKgflPa47A50PtB2+NgRpQvr7vA==}
     engines: {node: '>= 10'}
 
+  netlify-purge-cloudflare-on-deploy@1.2.0:
+    resolution: {integrity: sha512-MHAC9cQHIcoloxdVj0yV0n6qg3h96BCJjJkyBfmOqhTmWNMwRlaIZK86yc3c1KLWNW4S+eNn4H2ULqXrapkf8A==}
+
   nlcst-to-string@4.0.0:
     resolution: {integrity: sha512-YKLBCcUYKAg0FNlOBT6aI91qFmSiFKiluk655WzPF+DDMA02qIyy8uiRqI8QXtcFpEvll12LpL5MXqEmAZ+dcA==}
 
@@ -1514,6 +1521,7 @@ packages:
   sitemap@8.0.0:
     resolution: {integrity: sha512-+AbdxhM9kJsHtruUF39bwS/B0Fytw6Fr1o4ZAIAEqA6cke2xcoO2GleBw9Zw7nRzILVEgz7zBM5GiTJjie1G9A==}
     engines: {node: '>=14.0.0', npm: '>=6.0.0'}
+    deprecated: 'SECURITY: Multiple vulnerabilities fixed in 8.0.1 (XML injection, path traversal, command injection, protocol injection). Upgrade immediately: npm install sitemap@8.0.1'
     hasBin: true
 
   smol-toml@1.4.1:
@@ -3466,6 +3474,12 @@ snapshots:
   nanoid@3.3.11: {}
 
   neotraverse@0.6.18: {}
+
+  netlify-purge-cloudflare-on-deploy@1.2.0:
+    dependencies:
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
 
   nlcst-to-string@4.0.0:
     dependencies:
