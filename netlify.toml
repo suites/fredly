@@ -37,5 +37,3 @@
 
 [[plugins]]
   package = "netlify-purge-cloudflare-on-deploy"
-  [plugins.inputs]
-    purge_everything = true
