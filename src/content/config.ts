@@ -18,7 +18,15 @@ const blog = defineCollection({
         .transform((str) => new Date(str))
         .optional(),
       category: z
-        .enum(['web', 'network', 'cs', 'algorithm', 'deep-learning', 'infra'])
+        .enum([
+          'web',
+          'network',
+          'cs',
+          'stream',
+          'algorithm',
+          'deep-learning',
+          'infra',
+        ])
         .optional(),
       emoji: z.string().optional(),
       slug: z.string().optional(),
@@ -44,5 +52,3 @@ export const collections = {
   blog,
   pages,
 };
-
-

@@ -50,6 +50,13 @@ export const CATEGORIES: readonly Category[] = [
     link: '/category/cs/',
   },
   {
+    name: 'Stream',
+    slug: 'stream',
+    color: '#0c9ee4',
+    icon: '💧',
+    link: '/category/stream/',
+  },
+  {
     name: 'Algorithm',
     slug: 'algorithm',
     color: '#0c9ee4',
