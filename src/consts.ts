@@ -5,7 +5,7 @@ export const SITE_DESCRIPTION = `기술과 커뮤니케이션의 힘이 세상�
 export const SITE_URL = 'https://fredly.dev';
 export const AUTHOR_NAME = 'yoon.homme';
 export const AUTHOR_EMAIL = 'woosiks.io@gmail.com';
-export const RESUME_URL = '/about';
+export const RESUME_URL = '/about/';
 
 // 소셜 링크 타입 정의
 export interface SocialLinks {
@@ -33,42 +33,42 @@ export const CATEGORIES: readonly Category[] = [
     slug: 'web',
     color: '#0c9ee4',
     icon: '🌐',
-    link: '/category/web',
+    link: '/category/web/',
   },
   {
     name: 'Network',
     slug: 'network',
     color: '#C0D545',
     icon: '🌿',
-    link: '/category/network',
+    link: '/category/network/',
   },
   {
     name: 'Computer Science',
     slug: 'cs',
     color: '#ffa22b',
     icon: '💻',
-    link: '/category/cs',
+    link: '/category/cs/',
   },
   {
     name: 'Algorithm',
     slug: 'algorithm',
     color: '#0c9ee4',
     icon: '🧩',
-    link: '/category/algorithm',
+    link: '/category/algorithm/',
   },
   {
     name: 'Deep Learning',
     slug: 'deep-learning',
     color: '#C0D545',
     icon: '🧠',
-    link: '/category/deep-learning',
+    link: '/category/deep-learning/',
   },
   {
     name: 'Infra',
     slug: 'infra',
     color: '#f7615f',
     icon: '🏗️',
-    link: '/category/infra',
+    link: '/category/infra/',
   },
 ] as const;
 

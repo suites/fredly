@@ -50,7 +50,7 @@ function getParsedEmoji(post: typeof prevPost): string {
   <nav class="post-navigation" aria-label="포스트 네비게이션">
     {prevPost && (
       <div class="post-card-wrapper">
-        <a href={`/${('slug' in prevPost.data ? prevPost.data.slug : null) || prevPost.id.replace(/\/index\.mdx?$/, '').replace(/\//g, '-')}`} class="post-card-link">
+        <a href={`/${('slug' in prevPost.data ? prevPost.data.slug : null) || prevPost.id.replace(/\/index\.mdx?$/, '').replace(/\//g, '-')}/`} class="post-card-link">
           <div class="post-card-emoji" role="img" aria-hidden="true" set:html={getParsedEmoji(prevPost)}></div>
           <div class="post-card-content">
             <h5 class="post-card-title">{prevPost.data.title}</h5>

@@ -13,5 +13,5 @@ export default defineConfig({
     mdx({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),
     sitemap(),
   ],
-  trailingSlash: 'never',
+  trailingSlash: 'always',
 });
