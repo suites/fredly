@@ -15,7 +15,11 @@ export function generateSEO(props: Partial<SEOProps> = {}): Required<SEOProps> {
 
   const fullTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
   const fullCanonical = canonical || SITE_URL;
-  const fullImage = image || `${SITE_URL}/images/ogp.png`;
+  const fullImage = image
+    ? image.startsWith('http')
+      ? image
+      : `${SITE_URL}${image.startsWith('/') ? image : `/${image}`}`
+    : `${SITE_URL}/images/ogp.png`;
 
   return {
     title: fullTitle,
