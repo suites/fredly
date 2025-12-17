@@ -1,6 +1,6 @@
 ---
 import type { BlogPost } from '@/types';
-import { deriveBlogSlugFromId } from '@/utils/post-slug.util';
+import { getPostRouteSlug } from '@/utils/post-route.util';
 import CategoryLabel from './CategoryLabel.astro';
 import FormattedDate from './FormattedDate.astro';
 import { twemojiParse } from '@/utils/twemoji.util';
@@ -17,8 +17,7 @@ const title = data.title || ('slug' in data ? data.slug : null) || id;
 const date = ('date' in data ? data.date : null) || data.pubDate || new Date();
 const category = 'category' in data ? data.category : null;
 const emoji = ('emoji' in data ? data.emoji : null) || '📝';
-const slug =
-  ('slug' in data ? data.slug : null) || deriveBlogSlugFromId(id);
+const slug = getPostRouteSlug(post);
 
 // 이모지 파싱
 const parsedEmoji = twemojiParse(emoji);

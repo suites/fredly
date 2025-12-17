@@ -2,16 +2,14 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BlogPost from '@/layouts/BlogPost.astro';
-import { deriveBlogSlugFromId } from '@/utils/post-slug.util';
+import { getPostRouteSlug } from '@/utils/post-route.util';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   
   return posts.map((post) => {
     // 우리 스타일의 slug 필드를 우선 사용, 없으면 id에서 추출
-    const slug =
-      ('slug' in post.data ? post.data.slug : null) ||
-      deriveBlogSlugFromId(post.id);
+    const slug = getPostRouteSlug(post);
     
     // slug가 유효한지 확인
     if (!slug) {

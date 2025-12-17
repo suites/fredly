@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { twemojiParse } from '@/utils/twemoji.util';
 import { formatDate } from '@/utils/date';
+import { getPostRouteSlug } from '@/utils/post-route.util';
 
 // 현재 포스트의 슬러그 가져오기
 const currentSlug = Astro.url.pathname.split('/').pop() || '';
@@ -15,10 +16,7 @@ const sortedPosts = allPosts.sort((a, b) => {
 });
 
 // 현재 포스트의 인덱스 찾기 (slug 매칭 로직 개선)
-const currentIndex = sortedPosts.findIndex(post => {
-  const postSlug = ('slug' in post.data ? post.data.slug : null) || post.id.replace(/\/index\.mdx?$/, '').replace(/\//g, '-');
-  return postSlug === currentSlug;
-});
+const currentIndex = sortedPosts.findIndex((post) => getPostRouteSlug(post) === currentSlug);
 
 // 이전/다음 포스트 찾기
 const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
@@ -50,7 +48,7 @@ function getParsedEmoji(post: typeof prevPost): string {
   <nav class="post-navigation" aria-label="포스트 네비게이션">
     {prevPost && (
       <div class="post-card-wrapper">
-        <a href={`/${('slug' in prevPost.data ? prevPost.data.slug : null) || prevPost.id.replace(/\/index\.mdx?$/, '').replace(/\//g, '-')}/`} class="post-card-link">
+        <a href={`/${getPostRouteSlug(prevPost)}/`} class="post-card-link">
           <div class="post-card-emoji" role="img" aria-hidden="true" set:html={getParsedEmoji(prevPost)}></div>
           <div class="post-card-content">
             <h5 class="post-card-title">{prevPost.data.title}</h5>
@@ -64,7 +62,7 @@ function getParsedEmoji(post: typeof prevPost): string {
     
     {nextPost && (
       <div class="post-card-wrapper">
-        <a href={`/${('slug' in nextPost.data ? nextPost.data.slug : null) || nextPost.id.replace(/\/index\.mdx?$/, '').replace(/\//g, '-')}`} class="post-card-link">
+        <a href={`/${getPostRouteSlug(nextPost)}`} class="post-card-link">
           <div class="post-card-emoji" role="img" aria-hidden="true" set:html={getParsedEmoji(nextPost)}></div>
           <div class="post-card-content">
             <h5 class="post-card-title">{nextPost.data.title}</h5>
