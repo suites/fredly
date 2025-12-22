@@ -5,7 +5,7 @@ import PostCard from './PostCard.astro';
 import type { BlogPost } from '@/types';
 
 // 현재 포스트의 슬러그 가져오기
-const currentSlug = Astro.url.pathname.split('/').pop() || '';
+const currentSlug = Astro.url.pathname.split('/').filter(Boolean).pop() || '';
 
 // 모든 포스트 가져오기 (날짜순 정렬)
 const allPosts = await getCollection('blog');
@@ -15,12 +15,28 @@ const sortedPosts = allPosts.sort((a, b) => {
   return new Date(dateB).getTime() - new Date(dateA).getTime();
 });
 
-// 현재 포스트의 인덱스 찾기 (slug 매칭 로직 개선)
-const currentIndex = sortedPosts.findIndex((post) => getPostRouteSlug(post) === currentSlug);
+// 현재 포스트 찾기
+const currentPost = sortedPosts.find((post) => getPostRouteSlug(post) === currentSlug);
 
-// 이전/다음 포스트 찾기
-const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
-const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+// 같은 카테고리 포스트 필터링
+const category = currentPost?.data.category;
+const categoryPosts = category 
+  ? sortedPosts.filter(post => post.data.category === category)
+  : sortedPosts;
+
+// 현재 포스트의 인덱스 찾기 (카테고리 목록 내에서)
+const currentIndex = categoryPosts.findIndex((post) => getPostRouteSlug(post) === currentSlug);
+
+// 이전/다음 포스트 찾기 (카테고리 내에서)
+let prevPost = currentIndex > 0 ? categoryPosts[currentIndex - 1] : null;
+let nextPost = currentIndex < categoryPosts.length - 1 ? categoryPosts[currentIndex + 1] : null;
+
+// 만약 카테고리 내에 이동할 글이 하나도 없다면(현재 글만 존재), 전체 글에서 추천 (Fallback)
+if (!prevPost && !nextPost && categoryPosts.length <= 1) {
+  const allIndex = sortedPosts.findIndex((post) => getPostRouteSlug(post) === currentSlug);
+  prevPost = allIndex > 0 ? sortedPosts[allIndex - 1] : null;
+  nextPost = allIndex < sortedPosts.length - 1 ? sortedPosts[allIndex + 1] : null;
+}
 
 function convertToBlogPost(post: typeof sortedPosts[number]): BlogPost {
   // CollectionEntry<'blog'>를 BlogPost 타입으로 변환 (필요한 경우)
