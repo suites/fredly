@@ -152,25 +152,47 @@ const ogImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage
     border-left: 20px solid transparent;
   }
   
-  /* 히어로 이미지 (Gatsby 원본 스타일) */
+  /* 히어로 이미지 (심플 + 그리드 패턴 스타일) */
   .hero-image {
     position: relative;
-    background: var(--color-bg-secondary);
+    background-color: #F8FAFC; /* 기본 배경색 */
+    /* 세련된 그리드 패턴 추가 */
+    background-image: 
+      linear-gradient(#e2e8f0 1px, transparent 1px),
+      linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+    background-size: 40px 40px; /* 그리드 크기 */
+    background-position: center center;
+    
     text-align: center;
-    background-image: url('/images/svg/others/pattern.svg');
-    background-repeat: repeat;
-    background-size: 400px;
     min-height: 230px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
     padding: 0;
+    overflow: hidden; /* 블러 효과 등이 넘치지 않게 */
   }
-  
+
+  /* 트위모지 뒤에 은은한 빛 효과 추가 (선택 사항) */
+  .hero-image::before {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: var(--color-primary);
+    filter: blur(60px);
+    opacity: 0.15;
+    border-radius: 50%;
+    z-index: 0;
+  }
+
+  /* 트위모지 이미지는 빛 위로 올라오게 */
   .hero-image :global(.emoji) {
+    position: relative;
+    z-index: 1;
     width: 110px !important;
     height: 110px !important;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05)); /* 살짝 그림자 줘서 띄우기 */
   }
   
   .post-header {
