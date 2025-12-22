@@ -99,10 +99,14 @@ if (post.data.heroImage) {
           
           // Astro의 이미지 최적화 도구를 사용하여 처리된 이미지 URL 생성
           // getImage를 사용하면 개발 환경에서는 /_image?... 형태, 빌드 시에는 /_astro/... 형태로 생성됨
-          // 페이스북 등 소셜 미디어 크롤러 호환성을 위해 png 또는 jpg 포맷 사용 권장 (WebP는 일부 크롤러에서 인식 오류 발생 가능)
+          // OG 이미지 표준 권장 사항: 1200x630, 파일 크기 최적화를 위해 JPG 포맷 및 압축 사용
           const optimizedImage = await getImage({
             src: mod.default,
-            format: 'png',
+            format: 'jpg',
+            width: 1200,
+            height: 630,
+            fit: 'cover', // 1200x630 영역을 꽉 채우도록 크롭
+            quality: 80,  // 용량 최적화 (기본값보다 낮춤)
           });
           
           ogImage = optimizedImage.src;
