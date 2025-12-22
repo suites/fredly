@@ -1,6 +1,7 @@
 ---
 import type { HeaderProps } from '@/types';
 import { SITE_TITLE } from '@/consts';
+import CategoryMenu from './CategoryMenu.astro';
 
 export interface Props extends HeaderProps {}
 
@@ -16,6 +17,7 @@ export interface Props extends HeaderProps {}
           class="logo" 
         />
       </a>
+      <CategoryMenu />
     </div>
   </div>
 </header>
@@ -35,6 +37,9 @@ export interface Props extends HeaderProps {}
   .header .container {
     max-width: var(--max-width);
     padding: 0 var(--side-space);
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
   
   .logo-link {
@@ -42,17 +47,29 @@ export interface Props extends HeaderProps {}
     align-items: center;
     height: 60px;
     text-decoration: none;
+    margin-right: 30px;
   }
   
   .logo {
     display: block;
-    width: 170px;
-    height: 36px;
+    width: 140px;
+    height: auto;
   }
   
   @media screen and (max-width: 500px) {
+    .header .container {
+      flex-direction: column;
+      padding-bottom: 10px;
+    }
+    
+    .logo-link {
+      margin-right: 0;
+      height: 50px;
+    }
+
     .logo {
       margin: 0 auto;
+      width: 120px;
     }
   }
 </style>

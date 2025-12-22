@@ -4,7 +4,6 @@ import Layout from '@/layouts/Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import Bio from '@/components/Bio.astro';
-import CategoryMenu from '@/components/CategoryMenu.astro';
 import PostCard from '@/components/PostCard.astro';
 import { getCategoryBySlug, getAllCategorySlugs } from '@/utils/category';
 import { sortByDate } from '@/utils/date';
@@ -52,7 +51,6 @@ const pageDescription = `${categoryName} 관련 포스트들을 확인해보세�
   <div class="content-wrapper">
     <div class="layout-content">
       <main class="main-wrapper">
-        <CategoryMenu />
         
         <!-- 카테고리 제목 (Gatsby 원본 스타일) -->
         <h1 class="category-heading">{categoryName}</h1>

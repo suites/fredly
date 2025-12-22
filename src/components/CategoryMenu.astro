@@ -8,35 +8,10 @@ const currentPath = Astro.url.pathname;
 function isActiveCategory(category: Category): boolean {
   return currentPath.startsWith(`/category/${category.slug}`);
 }
-
-// 홈 활성화 확인
-const isHome = currentPath === '/';
-
-// 카테고리별 선인장 SVG 매핑
-const cactusIcons: Record<string, string> = {
-  'backend': '/images/svg/categories/cactus-blue.svg',
-  'ai-engineering': '/images/svg/categories/cactus-green.svg',
-  'cs': '/images/svg/categories/cactus-yellow.svg',
-  'dev-log': '/images/svg/categories/cactus-red.svg',
-};
 ---
 
 <nav class="category-menu" aria-label="카테고리 네비게이션">
   <ul class="category-list">
-    <!-- 홈 (New) -->
-    <li class="category-item">
-      <a 
-        href="/"
-        class={`category-link ${isHome ? 'active' : ''}`}
-        aria-current={isHome ? 'page' : undefined}
-      >
-        <div class="category-image">
-          <img src="/images/svg/categories/new.svg" alt="새 글" />
-        </div>
-        <span class="category-name">new</span>
-      </a>
-    </li>
-    
     <!-- 카테고리 목록 -->
     {CATEGORIES.map((category) => (
       <li class="category-item">
@@ -45,13 +20,6 @@ const cactusIcons: Record<string, string> = {
           class={`category-link ${isActiveCategory(category) ? 'active' : ''}`}
           aria-current={isActiveCategory(category) ? 'page' : undefined}
         >
-          <div class="category-image">
-            <img 
-              src={cactusIcons[category.slug] || '/images/svg/categories/cactus-blue.svg'} 
-              alt={category.name}
-              class="cactus"
-            />
-          </div>
           <span class="category-name">
             {category.name}
           </span>
@@ -62,19 +30,21 @@ const cactusIcons: Record<string, string> = {
 </nav>
 
 <style>
-                .category-menu {
-                display: block;
-                margin: 0;
-                padding: 0 0 2em;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-              }
+  .category-menu {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
               
-              .category-menu::-webkit-scrollbar {
-                display: none;
-              }
+  .category-menu::-webkit-scrollbar {
+    display: none;
+  }
   
   .category-list {
     display: flex;
@@ -82,123 +52,79 @@ const cactusIcons: Record<string, string> = {
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 20px;
+    gap: 24px;
+    align-items: center;
   }
   
   .category-item {
     flex-shrink: 0;
-    width: 70px;
+    width: auto;
     text-align: center;
   }
   
   .category-link {
     display: block;
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
+    padding: 8px 0;
+    transition: color 0.2s ease;
+    position: relative;
   }
   
-  .category-image {
-    padding: 2px;
-    background: rgba(49, 55, 70, 0.5);
-    border-radius: 50%;
-    position: relative;
-    margin-bottom: 5px;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .category-image img {
-    position: relative;
-    background: rgba(49, 55, 70, 0.5);
-    border-radius: 50%;
-    display: block;
-    width: 66px;
-    height: 66px;
-    z-index: 2;
-    object-fit: cover;
+  .category-link:hover,
+  .category-link.active {
+    color: white;
   }
   
   .category-name {
-    margin-top: 5px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     display: block;
   }
   
-  /* Active state with animation */
-  .category-item.active .category-image::after,
-  .category-link.active .category-image::after {
+  /* 밑줄 애니메이션 효과 */
+  .category-link::after {
     content: '';
     position: absolute;
-    display: block;
+    bottom: 0;
     left: 0;
-    top: 0;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+  }
+  
+  .category-link:hover::after,
+  .category-link.active::after {
     width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: linear-gradient(-45deg, #ffa649, #f7645b, #805ed4);
-    animation: rotating 2s linear infinite;
   }
-  
-  .category-item.active img,
-  .category-link.active img {
-    border: solid 2px rgb(33, 36, 45);
-  }
-  
+
+  /* 기존 Active 스타일 제거 및 재정의 */
   .category-item.active .category-name,
   .category-link.active .category-name {
     color: white;
   }
   
-  @keyframes rotating {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
   @media screen and (max-width: 500px) { /* theme.responsive.small */
     .category-menu {
-      padding: 1em 0;
-      margin: 0 -20px;
-      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
     }
     
-    .category-menu::-webkit-scrollbar {
-      display: none;
-    }
-    
-    .category-list::after {
-      content: '';
-      width: 40px;
-      flex: 0 0 auto;
+    .category-list {
+      gap: 16px;
     }
     
     .category-item {
-      width: 60px;
-      margin: 0 0 0 15px;
-      flex: 0 0 auto;
-    }
-    
-    .category-item .category-image {
-      width: 60px;
-      height: 60px;
-    }
-    
-    .category-item .category-image img {
-      width: 56px;
-      height: 56px;
+      width: auto;
+      margin: 0;
     }
     
     .category-name {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 </style>
