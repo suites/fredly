@@ -1,8 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
 import BlogPost from '@/layouts/BlogPost.astro';
 import { getPostRouteSlug } from '@/utils/post-route.util';
+import { extractFirstImage, extractDescription } from '@/utils/markdown';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -33,8 +36,90 @@ const { Content, headings } = await render(post);
 
 // 읽기 시간 계산 (간단한 추정)
 const readTime = Math.ceil(post.body.split(/\s+/).length / 200);
+
+// 설명 추출 (description이 없을 때 본문 내용 사용)
+const seoDescription = post.data.description || extractDescription(post.body);
+
+// 이미지 경로 해결을 위한 로직
+let ogImage: string | undefined = undefined;
+
+if (post.data.heroImage) {
+  // heroImage가 있으면 그것을 사용 (이미 처리된 이미지 객체일 수 있음)
+  // BlogPost에서 처리하므로 여기서는 undefined로 남겨둬도 되지만, 명시적으로 처리
+  // (BlogPost 내부 로직이 있으므로 undefined로 둠 -> BlogPost가 post.data.heroImage를 씀)
+  ogImage = undefined;
+} else {
+  // heroImage가 없으면 본문에서 추출
+  const rawFirstImage = extractFirstImage(post.body);
+  
+  if (rawFirstImage) {
+    if (rawFirstImage.startsWith('http') || rawFirstImage.startsWith('/')) {
+      // 절대 경로(URL)나 public 폴더 경로는 그대로 사용
+      ogImage = rawFirstImage;
+    } else {
+      // 상대 경로인 경우, 실제 이미지 파일을 찾아 처리된 URL로 변환
+      try {
+        // 모든 컨텐츠 이미지 로드 (빌드 타임)
+        const images = import.meta.glob<{ default: ImageMetadata }>('/src/content/**/*.{jpeg,jpg,png,gif,webp}');
+        
+        // 현재 포스트의 경로를 기반으로 이미지 경로 계산
+        // post.id는 'blog/my-post.md' 또는 'my-post.md' 형태
+        // post.collection은 'blog'
+        
+        // 경로 정규화 (윈도우/맥 호환 및 상대 경로 계산용)
+        const cleanId = post.id.replace(/\\/g, '/');
+        const folderPath = cleanId.includes('/') 
+          ? cleanId.substring(0, cleanId.lastIndexOf('/')) 
+          : '';
+        
+        // 이미지 경로 조합
+        // rawFirstImage가 './img.png' 또는 'img.png' 또는 '../img.png' 일 수 있음
+        // 간단한 해결을 위해 문자열 조작 사용 (path 모듈 없이)
+        let targetPath = '';
+        
+        if (rawFirstImage.startsWith('./')) {
+          targetPath = `/src/content/${post.collection}/${folderPath ? folderPath + '/' : ''}${rawFirstImage.substring(2)}`;
+        } else if (rawFirstImage.startsWith('../')) {
+          // 상위 경로 지원 (한 단계만 가정)
+          const parentPath = folderPath.includes('/') ? folderPath.substring(0, folderPath.lastIndexOf('/')) : '';
+          targetPath = `/src/content/${post.collection}/${parentPath ? parentPath + '/' : ''}${rawFirstImage.substring(3)}`;
+        } else {
+          // 'img.png' 형태
+          targetPath = `/src/content/${post.collection}/${folderPath ? folderPath + '/' : ''}${rawFirstImage}`;
+        }
+        
+        // 경로 정리 (// 제거)
+        targetPath = targetPath.replace(/\/\//g, '/');
+        
+        // glob 결과에서 매칭되는 이미지 찾기
+        const imageModule = images[targetPath];
+        
+        if (imageModule) {
+          const mod = await imageModule();
+          
+          // Astro의 이미지 최적화 도구를 사용하여 처리된 이미지 URL 생성
+          // getImage를 사용하면 개발 환경에서는 /_image?... 형태, 빌드 시에는 /_astro/... 형태로 생성됨
+          const optimizedImage = await getImage({
+            src: mod.default,
+            format: 'webp',
+          });
+          
+          ogImage = optimizedImage.src;
+        } else {
+          // 매칭되지 않으면 원본 경로 사용 (혹시 public에 있을 수 있으므로)
+          // 하지만 public 이미지는 보통 /로 시작하므로 여기 올 확률은 낮음
+          // console.warn(`Image not found in glob: ${targetPath}`);
+          ogImage = rawFirstImage; 
+        }
+      } catch (e) {
+        console.error('Error resolving image path:', e);
+        ogImage = rawFirstImage;
+      }
+    }
+  }
+}
 ---
 
-<BlogPost {...post.data} headings={headings} readTime={readTime}>
+<BlogPost {...post.data} headings={headings} readTime={readTime} ogImage={ogImage} ogDescription={seoDescription}>
   <Content />
 </BlogPost>

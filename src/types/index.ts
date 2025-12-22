@@ -9,6 +9,7 @@ export interface LayoutProps {
   title?: string | undefined;
   description?: string | undefined;
   image?: string | undefined;
+  type?: 'website' | 'article' | undefined;
 }
 
 export interface BlogPostLayoutProps extends BlogPostData {

@@ -14,14 +14,17 @@ import { SITE_URL } from '@/consts';
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: Array<{ depth: number; slug: string; text: string }>;
   readTime?: number;
+  ogImage?: string | undefined;
+  ogDescription?: string;
 };
 
-const { title, description, pubDate, headings, readTime, ...otherProps } = Astro.props;
+const { title, description, pubDate, headings, readTime, ogDescription, ...otherProps } = Astro.props;
 
 // 선택적 필드들 (우리 스타일 또는 다른 스타일 지원)
 const date = 'date' in otherProps ? otherProps.date : null;
 const category = 'category' in otherProps ? otherProps.category : null;
 const emoji = 'emoji' in otherProps ? otherProps.emoji : null;
+const propOgImage = 'ogImage' in otherProps ? (otherProps.ogImage as string) : undefined;
 
 // 날짜 필드 통합 (기존 스타일과 템플릿 모두 지원)
 const postDateValue = date || pubDate || new Date();
@@ -34,10 +37,12 @@ const postUrl = `${SITE_URL}${slug}`;
 const postId = Astro.url.pathname; // identifier로 사용
 
 const heroImage = 'heroImage' in otherProps ? otherProps.heroImage : undefined;
-const ogImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
+const resolvedHeroImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
+const finalOgImage = propOgImage || resolvedHeroImage;
+const seoDescription = ogDescription || description;
 ---
 
-<Layout title={title} description={description || ''} image={ogImage} canonical={postUrl}>
+<Layout title={title} description={seoDescription} image={finalOgImage} canonical={postUrl} type="article">
   <Header />
   
   <main id="main-content" class="blog-post-layout">

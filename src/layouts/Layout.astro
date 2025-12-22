@@ -9,7 +9,7 @@ export interface Props extends LayoutProps {
   robots?: string;
 }
 
-const { title, description, image, canonical, robots } = Astro.props;
+const { title, description, image, canonical, robots, type } = Astro.props;
 
 // SEO 메타데이터 생성
 // const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -18,6 +18,7 @@ const seo = generateSEO({
   description,
   canonical,
   image,
+  type,
 });
 
 const schema = {
