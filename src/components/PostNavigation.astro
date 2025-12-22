@@ -76,4 +76,38 @@ function convertToBlogPost(post: typeof sortedPosts[number]): BlogPost {
       padding: 30px 20px;
     }
   }
+
+  /* PostCard 스타일 오버라이드 */
+  .post-navigation :global(.post-card-link) {
+    color: var(--color-bg);
+    border-radius: 8px;
+    padding: 1.2rem;
+    transition: all 0.2s ease;
+  }
+
+  .post-navigation :global(.post-card-content h3) {
+    color: var(--color-bg);
+  }
+
+  /* 호버 효과 개선: 어두운 배경 대신 밝은 배경과 그림자 활용 */
+  .post-navigation :global(.post-card-link:hover) {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* 이모지 배경 스타일 조정 */
+  .post-navigation :global(.post-card-emoji) {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .post-navigation :global(.post-card-link:hover .post-card-emoji) {
+    background: var(--color-bg-tertiary);
+  }
+
+  /* 날짜 텍스트 색상 조정 (필요시) */
+  .post-navigation :global(.post-card-content time) {
+    color: var(--color-text-muted);
+  }
 </style>
