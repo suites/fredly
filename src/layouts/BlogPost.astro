@@ -37,7 +37,7 @@ const heroImage = 'heroImage' in otherProps ? otherProps.heroImage : undefined;
 const ogImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
 ---
 
-<Layout title={title} description={description || ''} image={ogImage}>
+<Layout title={title} description={description || ''} image={ogImage} canonical={postUrl}>
   <Header />
   
   <main id="main-content" class="blog-post-layout">
