@@ -1,9 +1,9 @@
 // 사이트 기본 정보
 export const SITE_TITLE = 'fredly.dev';
-export const SITE_DESCRIPTION = `기술과 커뮤니케이션의 힘이 세상을 바꾼다고 믿습니다.
-편리한 세상으로 나아가기 위해 고민하고 개발합니다.`;
+export const SITE_DESCRIPTION = `백엔드 엔지니어의 시선으로 AI를 해석하고 기록합니다.
+대규모 시스템 설계 경험 위에 머신러닝과 LLM을 더해, 실무와 이론의 경계를 넘나드는 엔지니어링 인사이트를 나눕니다.`;
 export const SITE_URL = 'https://fredly.dev';
-export const AUTHOR_NAME = 'yoon.homme';
+export const AUTHOR_NAME = 'Fred';
 export const AUTHOR_EMAIL = 'woosiks.io@gmail.com';
 export const RESUME_URL = '/about/';
 
