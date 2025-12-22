@@ -5,7 +5,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import Bio from '@/components/Bio.astro';
 import PostCard from '@/components/PostCard.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@/consts';
+import { SITE_DESCRIPTION } from '@/consts';
 import { sortByDate } from '@/utils/date';
 
 // 모든 블로그 포스트 가져오기
@@ -13,7 +13,7 @@ const posts = await getCollection('blog');
 const sortedPosts = sortByDate(posts);
 ---
 
-<Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<Layout title="The Gradient of Logic" description={SITE_DESCRIPTION}>
   <Header />
   
   <div class="content-wrapper">
