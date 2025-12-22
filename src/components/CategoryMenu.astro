@@ -64,7 +64,7 @@ function isActiveCategory(category: Category): boolean {
   
   .category-link {
     display: block;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     padding: 8px 0;
     transition: color 0.2s ease;
@@ -73,7 +73,7 @@ function isActiveCategory(category: Category): boolean {
   
   .category-link:hover,
   .category-link.active {
-    color: var(--color-text);
+    color: white;
   }
   
   .category-name {
@@ -91,7 +91,7 @@ function isActiveCategory(category: Category): boolean {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--color-text);
+    background-color: white;
     transition: width 0.3s ease;
   }
   
@@ -103,7 +103,7 @@ function isActiveCategory(category: Category): boolean {
   /* 기존 Active 스타일 제거 및 재정의 */
   .category-item.active .category-name,
   .category-link.active .category-name {
-    color: var(--color-text);
+    color: white;
   }
   
   @media screen and (max-width: 500px) { /* theme.responsive.small */
