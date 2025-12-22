@@ -29,18 +29,18 @@ export interface Category {
 
 export const CATEGORIES: readonly Category[] = [
   {
-    name: 'Web',
-    slug: 'web',
+    name: 'System Design & Backend',
+    slug: 'backend',
     color: '#0c9ee4',
-    icon: '🌐',
-    link: '/category/web/',
+    icon: '🏗️',
+    link: '/category/backend/',
   },
   {
-    name: 'Network',
-    slug: 'network',
+    name: 'AI Engineering',
+    slug: 'ai-engineering',
     color: '#C0D545',
-    icon: '🌿',
-    link: '/category/network/',
+    icon: '🧠',
+    link: '/category/ai-engineering/',
   },
   {
     name: 'Computer Science',
@@ -50,32 +50,11 @@ export const CATEGORIES: readonly Category[] = [
     link: '/category/cs/',
   },
   {
-    name: 'Stream',
-    slug: 'stream',
-    color: '#0c9ee4',
-    icon: '💧',
-    link: '/category/stream/',
-  },
-  {
-    name: 'Algorithm',
-    slug: 'algorithm',
-    color: '#0c9ee4',
-    icon: '🧩',
-    link: '/category/algorithm/',
-  },
-  {
-    name: 'Deep Learning',
-    slug: 'deep-learning',
-    color: '#C0D545',
-    icon: '🧠',
-    link: '/category/deep-learning/',
-  },
-  {
-    name: 'Infra',
-    slug: 'infra',
+    name: 'Dev Log',
+    slug: 'dev-log',
     color: '#f7615f',
-    icon: '🏗️',
-    link: '/category/infra/',
+    icon: '📝',
+    link: '/category/dev-log/',
   },
 ] as const;
 
