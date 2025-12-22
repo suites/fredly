@@ -16,36 +16,38 @@ function getIndentLevel(depth: number): number {
 ---
 
 {filteredHeadings.length > 0 && (
-  <nav class="table-of-contents" aria-label="목차">
-    <div class="toc-header">
-      <h3 class="toc-title">
-        <span class="toc-icon" aria-hidden="true">📋</span>
-        목차
-      </h3>
-      <div class="toc-progress">
-        <div class="progress-bar" id="toc-progress"></div>
+  <table-of-contents>
+    <nav class="table-of-contents" aria-label="목차">
+      <div class="toc-header">
+        <h3 class="toc-title">
+          <span class="toc-icon" aria-hidden="true">📋</span>
+          목차
+        </h3>
+        <div class="toc-progress">
+          <div class="progress-bar" id="toc-progress"></div>
+        </div>
       </div>
-    </div>
-    
-    <ol class="toc-list">
-      {filteredHeadings.map((heading) => (
-        <li 
-          class="toc-item"
-          style={`--indent-level: ${getIndentLevel(heading.depth)}`}
-          data-heading-id={heading.slug}
-        >
-          <a 
-            href={`#${heading.slug}`}
-            class="toc-link"
-            data-heading={heading.slug}
+      
+      <ol class="toc-list">
+        {filteredHeadings.map((heading) => (
+          <li 
+            class="toc-item"
+            style={`--indent-level: ${getIndentLevel(heading.depth)}`}
+            data-heading-id={heading.slug}
           >
-            <span class="toc-marker" aria-hidden="true"></span>
-            <span class="toc-text">{heading.text}</span>
-          </a>
-        </li>
-      ))}
-    </ol>
-  </nav>
+            <a 
+              href={`#${heading.slug}`}
+              class="toc-link"
+              data-heading={heading.slug}
+            >
+              <span class="toc-marker" aria-hidden="true"></span>
+              <span class="toc-text">{heading.text}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </table-of-contents>
 )}
 
 <style>
@@ -243,83 +245,112 @@ function getIndentLevel(depth: number): number {
 </style>
 
 <script>
-  // 목차 활성화 및 진행률 표시 스크립트
-  document.addEventListener('DOMContentLoaded', () => {
-    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
-    const progressBar = document.getElementById('toc-progress') as HTMLElement;
-    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    
-    if (!tocLinks.length || !progressBar || !headings.length) return;
-    
-    // Intersection Observer로 현재 보고 있는 섹션 추적
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const id = entry.target.id;
-        const tocLink = document.querySelector(`[data-heading="${id}"]`);
-        
-        if (entry.isIntersecting && tocLink) {
-          // 모든 링크 비활성화
-          tocLinks.forEach(link => link.classList.remove('active'));
-          // 현재 링크 활성화
-          tocLink.classList.add('active');
+  class TableOfContents extends HTMLElement {
+    private tocLinks: NodeListOf<HTMLAnchorElement>;
+    private progressBar: HTMLElement | null;
+    private headings: NodeListOf<HTMLElement>;
+    private observer: IntersectionObserver | null;
+    private ticking: boolean;
+
+    constructor() {
+      super();
+      this.tocLinks = this.querySelectorAll<HTMLAnchorElement>('.toc-link');
+      this.progressBar = this.querySelector('#toc-progress');
+      this.headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      this.observer = null;
+      this.ticking = false;
+      
+      this.onScroll = this.onScroll.bind(this);
+    }
+
+    connectedCallback() {
+      if (!this.tocLinks.length || !this.headings.length) return;
+      
+      this.setupObserver();
+      this.setupSmoothScroll();
+      this.setupScrollProgress();
+      
+      // 초기 진행률 설정
+      this.updateProgress();
+    }
+
+    disconnectedCallback() {
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+      window.removeEventListener('scroll', this.onScroll);
+    }
+
+    private setupObserver() {
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            const tocLink = this.querySelector(`[data-heading="${id}"]`);
+            
+            if (tocLink) {
+              // 모든 링크 비활성화
+              this.tocLinks.forEach(link => link.classList.remove('active'));
+              // 현재 링크 활성화
+              tocLink.classList.add('active');
+            }
+          }
+        });
+      }, {
+        rootMargin: '-20% 0px -80% 0px'
+      });
+      
+      this.headings.forEach(heading => {
+        if (heading.id) {
+          this.observer?.observe(heading);
         }
       });
-    }, {
-      rootMargin: '-20% 0px -80% 0px'
-    });
-    
-    // 모든 헤딩 관찰
-    headings.forEach(heading => {
-      if (heading.id) {
-        observer.observe(heading);
+    }
+
+    private setupSmoothScroll() {
+      this.tocLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href')?.substring(1);
+          const targetElement = document.getElementById(targetId || '');
+          
+          if (targetElement) {
+            const offset = 100; // 헤더 높이 고려
+            const targetPosition = targetElement.offsetTop - offset;
+            
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    }
+
+    private setupScrollProgress() {
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+    }
+
+    private onScroll() {
+      if (!this.ticking) {
+        requestAnimationFrame(() => {
+          this.updateProgress();
+          this.ticking = false;
+        });
+        this.ticking = true;
       }
-    });
-    
-    // 스크롤 진행률 표시
-    function updateProgress() {
+    }
+
+    private updateProgress() {
+      if (!this.progressBar) return;
+
       const scrollTop = window.pageYOffset;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrolled = (scrollTop / docHeight) * 100;
       
-      if (progressBar) {
-        progressBar.style.width = `${Math.min(scrolled, 100)}%`;
-      }
+      this.progressBar.style.width = `${Math.min(scrolled, 100)}%`;
     }
-    
-    // 스크롤 이벤트 리스너 (throttled)
-    let ticking = false;
-    function onScroll() {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updateProgress();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }
-    
-    window.addEventListener('scroll', onScroll, { passive: true });
-    
-    // 초기 진행률 설정
-    updateProgress();
-    
-    // 부드러운 스크롤
-    tocLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href')?.substring(1);
-        const targetElement = document.getElementById(targetId || '');
-        
-        if (targetElement) {
-          const offset = 100; // 헤더 높이 고려
-          const targetPosition = targetElement.offsetTop - offset;
-          
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
-  });
+  }
+
+  customElements.define('table-of-contents', TableOfContents);
 </script>
