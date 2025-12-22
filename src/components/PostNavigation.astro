@@ -62,7 +62,7 @@ function getParsedEmoji(post: typeof prevPost): string {
     
     {nextPost && (
       <div class="post-card-wrapper">
-        <a href={`/${getPostRouteSlug(nextPost)}`} class="post-card-link">
+        <a href={`/${getPostRouteSlug(nextPost)}/`} class="post-card-link">
           <div class="post-card-emoji" role="img" aria-hidden="true" set:html={getParsedEmoji(nextPost)}></div>
           <div class="post-card-content">
             <h5 class="post-card-title">{nextPost.data.title}</h5>
