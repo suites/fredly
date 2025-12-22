@@ -99,9 +99,10 @@ if (post.data.heroImage) {
           
           // Astro의 이미지 최적화 도구를 사용하여 처리된 이미지 URL 생성
           // getImage를 사용하면 개발 환경에서는 /_image?... 형태, 빌드 시에는 /_astro/... 형태로 생성됨
+          // 페이스북 등 소셜 미디어 크롤러 호환성을 위해 png 또는 jpg 포맷 사용 권장 (WebP는 일부 크롤러에서 인식 오류 발생 가능)
           const optimizedImage = await getImage({
             src: mod.default,
-            format: 'webp',
+            format: 'png',
           });
           
           ogImage = optimizedImage.src;
