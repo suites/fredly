@@ -29,7 +29,7 @@ export interface Category {
 
 export const CATEGORIES: readonly Category[] = [
   {
-    name: 'System Design & Backend',
+    name: 'Backend',
     slug: 'backend',
     color: '#0c9ee4',
     icon: '🏗️',
