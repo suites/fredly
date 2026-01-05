@@ -1,0 +1,245 @@
+---
+title: '블로그에 광고 없는 댓글 시스템을 원한다면: Disqus에서 Giscus로 이사하기'
+date: '2026-01-05'
+category: 'dev-log'
+emoji: '📦'
+slug: 'giscus-migration-blog'
+---
+
+## 개요
+
+블로그를 운영하면서 독자들과 소통할 수 있는 댓글 시스템은 필수적이다. 처음에는 Disqus를 사용했지만, 최근 Giscus로 완전히 전환했다. 이번 글에서는 Disqus의 한계와 Giscus로 전환한 이유, 그리고 실제 적용 과정을 공유한다.
+
+## 왜 Disqus를 떠나게 되었나
+
+실제 블로그를 운영하면서 Disqus를 사용하다 보니 몇 가지 문제점이 명확해졌다.
+
+### 1. 광고의 침투
+
+![image.png](image.png)
+
+최근에 알게된 사실인데, Disqus는 무료 플랜에서 광고를 표시한다. 평소에 본인은 광고 제거 플러그인을 사용하기 때문에, disqus에서 강제로 광고를 붙이는걸 인지하지 못하고 있었다. 독자들이 댓글을 읽으려고 스크롤을 내리면 광고가 튀어나오고, 때로는 댓글보다 광고가 더 눈에 띄는 경우가 빈번했다.
+
+블로그의 깔끔한 디자인을 유지하고 싶었는데, Disqus의 광고는 그 퀄리티를 해치는 요소였다. 특히 기술 블로그의 경우 독자 경험(UX)이 중요한데, 광고는 이를 방해하는 요소였다.
+
+### 2. 데이터 소유권의 부재
+
+Disqus는 모든 댓글 데이터를 자체 서버에 저장한다. 이는 다음과 같은 문제를 야기한다:
+
+- **데이터 이식성 부족**: 언젠가 Disqus를 떠나고 싶어도 댓글 데이터를 쉽게 가져올 수 없다
+- **플랫폼 종속성**: Disqus 서비스가 종료되거나 정책이 변경되면 모든 댓글이 사라질 수 있다
+- **제어권 부족**: 댓글 데이터에 대한 완전한 제어권이 없다
+
+백엔드 개발자로서 데이터 소유권의 중요성을 알고 있었기에, 이는 무시할 수 없는 문제였다.
+
+### 3. 성능 이슈
+
+Disqus 스크립트는 생각보다 무겁다. 특히 모바일 환경에서 페이지 로딩 속도에 영향을 주는 경우가 많았다. 블로그의 성능 최적화를 신경 쓰고 있는 입장에서, 이는 무시할 수 없는 문제였다.
+
+### 4. 커스터마이징의 한계
+
+Disqus는 기본적인 커스터마이징은 가능하지만, 디자인을 완전히 내 입맛에 맞추기는 어렵다. 특히 다크 모드나 특정 색상 테마를 적용하려면 한계가 있었다.
+
+## Giscus란 무엇인가
+
+Giscus는 GitHub Discussions를 기반으로 작동하는 오픈소스 댓글 시스템이다. utterances에서 영감을 받아 만들어졌으며, 모든 댓글 데이터를 GitHub Discussions에 저장한다.
+
+### Giscus의 핵심 장점
+
+#### 1. 완전 무료, 광고 없음
+
+Giscus는 완전히 무료이고, 광고가 전혀 없다. 오픈소스 프로젝트이고, 사용자 추적도 하지 않는다. 이는 Disqus의 가장 큰 문제점인 광고 문제를 완전히 해결한다.
+
+#### 2. 데이터 소유권
+
+모든 댓글은 GitHub Discussions에 저장된다. 즉, 댓글 데이터를 완전히 소유할 수 있고, GitHub에서 직접 관리할 수 있다. 이는 장기적으로 매우 중요한 장점이다. 플랫폼 종속성에서 벗어날 수 있다.
+
+#### 3. GitHub 생태계와의 통합
+
+이미 GitHub를 사용하고 있다면, 별도의 계정 생성 없이 바로 사용할 수 있다. GitHub OAuth를 통해 로그인하므로, 개발자들에게는 매우 친숙한 환경이다.
+
+#### 4. 가벼운 성능
+
+Giscus 스크립트는 상대적으로 가볍고, lazy loading도 지원한다. 페이지 로딩 성능에 미치는 영향이 최소화된다.
+
+#### 5. 다양한 커스터마이징
+
+테마를 다양하게 선택할 수 있고, 커스텀 테마도 만들 수 있다. 본인은 `noborder_light` 테마를 선택해서 블로그의 깔끔한 디자인과 잘 어울리도록 했다.
+
+#### 6. 자동 Discussion 생성
+
+페이지와 Discussion을 자동으로 매핑해주고, 첫 댓글이 달릴 때 자동으로 Discussion을 생성해준다. 관리가 매우 편리하다.
+
+## Giscus 설정 및 적용하기
+
+### 1. GitHub 저장소 준비
+
+먼저 GitHub 저장소가 준비되어 있어야 한다:
+
+- 저장소가 **public**이어야 한다
+- **Discussions** 기능이 활성화되어 있어야 한다
+- **giscus 앱**이 설치되어 있어야 한다
+
+Discussions 활성화는 저장소 Settings → General → Features에서 할 수 있다.
+
+### 2. giscus 앱 설치
+
+[giscus 앱 설치 페이지](https://github.com/apps/giscus)에서 설치한다. 설치할 때 댓글을 저장할 저장소를 선택하면 된다.
+
+### 3. giscus 설정 페이지에서 설정 가져오기
+
+[giscus 설정 페이지](https://giscus.app/ko)에 접속해서 설정을 완료한다:
+
+1. **저장소 선택**: 댓글을 저장할 GitHub 저장소 선택
+2. **Discussion 카테고리 선택**: 새 Discussion이 생성될 카테고리 선택 (Announcements 타입 권장)
+3. **페이지 - Discussions 연결 방법**: `pathname`을 선택하면 URL 경로를 기반으로 자동 매핑된다
+4. **기능 설정**: 반응 활성화, 메타데이터 전송 등 원하는 옵션 선택
+5. **테마 선택**: 블로그 디자인에 맞는 테마 선택
+
+설정을 완료하면 스크립트 태그가 생성된다. 여기서 필요한 값들을 가져오면 된다:
+
+```html
+<script
+  src="https://giscus.app/client.js"
+  data-repo="your-username/your-repo"
+  data-repo-id="xxxxxxxxxxxxx"
+  data-category="Announcements"
+  data-category-id="xxxxxxxxxxxxx"
+  data-mapping="pathname"
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="1"
+  data-input-position="top"
+  data-theme="noborder_light"
+  data-lang="ko"
+  crossorigin="anonymous"
+  async
+></script>
+```
+
+### 4. Astro 프로젝트에 적용하기
+
+본인은 Astro를 사용하고 있어서, 컴포넌트로 만들어서 사용했다.
+
+#### `src/consts.ts`에 설정 추가
+
+```typescript
+export const GISCUS_CONFIG = {
+  repo: 'suites/fredly',
+  repoId: 'xxxxxxxxxxxxx',
+  category: 'Announcements',
+  categoryId: 'xxxxxxxxxxxxx',
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '1',
+  inputPosition: 'top',
+  theme: 'noborder_light',
+  lang: 'ko',
+} as const;
+```
+
+#### `src/components/Giscus.astro` 컴포넌트 생성
+
+```astro
+---
+import { GISCUS_CONFIG } from '@/consts';
+
+interface Props {
+  repo?: string;
+  repoId?: string;
+  category?: string;
+  categoryId?: string;
+  mapping?: 'pathname' | 'url' | 'title' | 'og:title' | 'specific' | 'number';
+  strict?: '0' | '1';
+  reactionsEnabled?: '0' | '1';
+  emitMetadata?: '0' | '1';
+  inputPosition?: 'top' | 'bottom';
+  theme?: string;
+  lang?: string;
+}
+
+const {
+  repo = GISCUS_CONFIG.repo,
+  repoId = GISCUS_CONFIG.repoId,
+  category = GISCUS_CONFIG.category,
+  categoryId = GISCUS_CONFIG.categoryId,
+  mapping = GISCUS_CONFIG.mapping,
+  strict = GISCUS_CONFIG.strict,
+  reactionsEnabled = GISCUS_CONFIG.reactionsEnabled,
+  emitMetadata = GISCUS_CONFIG.emitMetadata,
+  inputPosition = GISCUS_CONFIG.inputPosition,
+  theme = GISCUS_CONFIG.theme,
+  lang = GISCUS_CONFIG.lang,
+} = Astro.props;
+---
+
+<div class="giscus-container"></div>
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo={repo}
+  data-repo-id={repoId}
+  data-category={category}
+  data-category-id={categoryId}
+  data-mapping={mapping}
+  data-strict={strict}
+  data-reactions-enabled={reactionsEnabled}
+  data-emit-metadata={emitMetadata}
+  data-input-position={inputPosition}
+  data-theme={theme}
+  data-lang={lang}
+  crossorigin="anonymous"
+  async
+>
+</script>
+```
+
+#### 블로그 포스트 레이아웃에 적용
+
+```astro
+---
+import Giscus from '@/components/Giscus.astro';
+---
+
+<!-- 포스트 본문 -->
+<div class="prose">
+  <slot />
+</div>
+
+<!-- Giscus 댓글 시스템 -->
+<aside class="post-aside">
+  <Giscus />
+</aside>
+```
+
+이렇게 하면 각 포스트마다 자동으로 해당하는 Discussion이 매핑되어 댓글이 표시된다.
+
+### 5. 테마 선택 전략
+
+블로그 디자인에 맞는 테마를 선택하는 것이 중요하다. 본인은 다음과 같은 기준으로 선택했다:
+
+- **블로그 포스트 영역이 흰색 배경**: `noborder_light` 또는 `github_light` 추천
+- **다크 테마 블로그**: `github_dark` 또는 `noborder_dark` 추천
+- **사용자 선호도 존중**: `preferred_color_scheme` (시스템 설정에 따라 자동 전환)
+
+giscus 설정 페이지에서 미리보기를 볼 수 있으니, 여러 테마를 비교해보는 것을 권장한다.
+
+## 결론: 데이터 소유권의 중요성
+
+Disqus에서 Giscus로 전환하고나서, 전혀 후회하지 않는다. 오히려 왜 이렇게 늦게 전환했나 싶을 정도로 만족스럽다.
+
+**Giscus의 가장 큰 장점은 데이터 소유권**이라고 생각한다. 모든 댓글이 GitHub Discussions에 저장되므로, 언제든지 접근하고 관리할 수 있다. 또한 GitHub 생태계와의 통합으로 개발자들에게는 매우 친숙한 환경이다.
+
+광고 없이 깔끔한 댓글 시스템을 원한다면, Giscus를 강력히 추천한다. 설정도 생각보다 간단하고, 커뮤니티도 활발해서 문제가 생겨도 빠르게 해결할 수 있다.
+
+이 글을 보신 분들이 블로그 댓글 시스템 선택 시 도움이 되기를 바라면서 이 글을 마친다.
+
+---
+
+**참고 자료:**
+
+- [Giscus 공식 사이트](https://giscus.app/)
+- [Giscus GitHub 저장소](https://github.com/giscus/giscus)
+- [GitHub Discussions 문서](https://docs.github.com/en/discussions)
+- [설정 참고 fredly Github](https://github.com/suites/fredly)

@@ -6,10 +6,10 @@ import Footer from '@/components/Footer.astro';
 import Bio from '@/components/Bio.astro';
 import CategoryLabel from '@/components/CategoryLabel.astro';
 import PostNavigation from '@/components/PostNavigation.astro';
-import Disqus from '@/components/Disqus.astro';
 import { formatDate } from '@/utils/date';
 import { twemojiParse } from '@/utils/twemoji.util';
 import { SITE_URL } from '@/consts';
+import Giscus from '@/components/Giscus.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: Array<{ depth: number; slug: string; text: string }>;
@@ -31,10 +31,9 @@ const postDateValue = date || pubDate || new Date();
 const postDate = formatDate(postDateValue);
 const estimatedReadTime = readTime || 5;
 
-// Disqus 설정 (Gatsby 버전과 동일)
+// 포스트 URL (canonical URL 및 SEO용)
 const slug = ('slug' in otherProps ? otherProps.slug : null) || Astro.url.pathname;
 const postUrl = `${SITE_URL}${slug}`;
-const postId = Astro.url.pathname; // identifier로 사용
 
 const heroImage = 'heroImage' in otherProps ? otherProps.heroImage : undefined;
 const resolvedHeroImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
@@ -82,9 +81,9 @@ const seoDescription = ogDescription || description;
             <slot />
           </div>
           
-          <!-- Disqus (RelatedPosts 위에 위치) -->
+          <!-- Giscus 댓글 시스템 -->
           <aside class="post-aside">
-            <Disqus url={postUrl} identifier={postId} title={title} />
+            <Giscus />
           </aside>
           
           <!-- 포스트 네비게이션 (RelatedPosts 역할) -->
@@ -294,13 +293,12 @@ const seoDescription = ogDescription || description;
     color: #333;
     font-weight: 700;
     line-height: 1.5;
-    margin: 40px 0 10px;
     scroll-margin-top: 5rem;
   }
   
   .prose :global(h2) { 
     position: relative;
-    margin: 55px 0 12px;
+    margin: 30px 0 12px;
     padding: 5px 0 5px 17px;
     font-size: 1.55em;
   }
@@ -318,7 +316,7 @@ const seoDescription = ogDescription || description;
   }
   
   .prose :global(h3) { 
-    margin: 55px 0 12px;
+    margin: 20px 0 12px;
     font-size: 1.45em; 
   }
   

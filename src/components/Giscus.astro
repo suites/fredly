@@ -1,0 +1,68 @@
+---
+import { GISCUS_CONFIG } from '@/consts';
+
+interface Props {
+  repo?: string;
+  repoId?: string;
+  category?: string;
+  categoryId?: string;
+  mapping?: 'pathname' | 'url' | 'title' | 'og:title' | 'specific' | 'number';
+  strict?: '0' | '1';
+  reactionsEnabled?: '0' | '1';
+  emitMetadata?: '0' | '1';
+  inputPosition?: 'top' | 'bottom';
+  theme?: string;
+  lang?: string;
+}
+
+const {
+  repo = GISCUS_CONFIG.repo,
+  repoId = GISCUS_CONFIG.repoId,
+  category = GISCUS_CONFIG.category,
+  categoryId = GISCUS_CONFIG.categoryId,
+  mapping = GISCUS_CONFIG.mapping,
+  strict = GISCUS_CONFIG.strict,
+  reactionsEnabled = GISCUS_CONFIG.reactionsEnabled,
+  emitMetadata = GISCUS_CONFIG.emitMetadata,
+  inputPosition = GISCUS_CONFIG.inputPosition,
+  theme = GISCUS_CONFIG.theme,
+  lang = GISCUS_CONFIG.lang,
+} = Astro.props;
+---
+
+<div class="giscus-container"></div>
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo={repo}
+  data-repo-id={repoId}
+  data-category={category}
+  data-category-id={categoryId}
+  data-mapping={mapping}
+  data-strict={strict}
+  data-reactions-enabled={reactionsEnabled}
+  data-emit-metadata={emitMetadata}
+  data-input-position={inputPosition}
+  data-theme={theme}
+  data-lang={lang}
+  crossorigin="anonymous"
+  async
+></script>
+
+<noscript>
+  JavaScript를 활성화하여 <a href="https://giscus.app">giscus</a> 댓글을 볼 수 있습니다.
+</noscript>
+
+<style>
+  .giscus-container {
+    margin: 0 0 2.5em;
+    padding: 0 2.5em;
+  }
+  
+  @media (max-width: 500px) {
+    .giscus-container {
+      padding: 0 20px;
+    }
+  }
+</style>
+

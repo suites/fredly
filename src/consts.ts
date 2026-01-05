@@ -60,3 +60,17 @@ export const CATEGORIES: readonly Category[] = [
 
 // 카테고리 타입 추론
 export type CategorySlug = (typeof CATEGORIES)[number]['slug'];
+
+export const GISCUS_CONFIG = {
+  repo: 'suites/fredly',
+  repoId: 'MDEwOlJlcG9zaXRvcnkxOTY4MzM1MjI=',
+  category: 'Announcements',
+  categoryId: 'DIC_kwDOC7tw8s4C0k6W',
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '1',
+  inputPosition: 'top',
+  theme: 'noborder_light',
+  lang: 'ko',
+} as const;
