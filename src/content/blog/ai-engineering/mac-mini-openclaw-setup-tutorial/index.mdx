@@ -1,0 +1,107 @@
+---
+title: '실전! 맥미니(Mac mini)를 최강의 AI 에이전트 서버로 만드는 법 (feat. OpenClaw)'
+date: '2026-02-11'
+category: 'ai-engineering'
+emoji: '🖥️'
+slug: 'mac-mini-openclaw-setup-tutorial'
+---
+
+## 개요
+
+지난 글에서 왜 OpenClaw를 도입했는지, 그리고 어떤 멀티 에이전트 팀을 꾸렸는지 소개했다. 이번 글에서는 약속대로 내 책상 위에서 24시간 잠들지 않고 일하는 맥미니(Mac mini)를 최강의 AI 에이전트 서버로 세팅하는 과정을 튜토리얼 형태로 공유한다.
+
+백엔드 개발자라면 집에 남는 서버 한 대쯤은(혹은 맥미니 한 대쯤은) 있기 마련이다. 이 저전력 고효율 머신이 어떻게 나만의 지능형 게이트웨이로 변신하는지, 직접 삽질하며 얻은 팁들을 정리했다.
+
+## 왜 맥미니인가?
+
+AI 에이전트를 24시간 돌리기 위해서는 다음의 조건이 필요하다.
+1. 정숙함과 저전력: 내 방에 두고 돌려야 하므로 소음이 없어야 하고 전기료 부담이 적어야 한다.
+2. 충분한 단일 코어 성능: 에이전트가 도구를 실행하고 쉘 명령을 처리할 때 반응 속도가 중요하다.
+3. Unix 기반 환경: 대부분의 AI 도구와 라이브러리는 리눅스/맥 환경에서 가장 안정적이다.
+
+Apple Silicon 맥미니는 이 모든 조건을 완벽하게 충족한다.
+
+---
+
+## 1단계: 기본 환경 구축
+
+가장 먼저 Node.js 환경이 필요하다. OpenClaw는 Node.js 기반으로 동작하므로 최신 LTS 버전을 설치하자.
+
+```bash
+# Homebrew가 설치되어 있다는 가정하에
+brew install node
+node -v # v22.x 이상 권장
+```
+
+## 2단계: OpenClaw 설치
+
+이제 오늘의 주인공, OpenClaw를 설치할 차례다. 전역(Global)으로 설치하여 어디서든 CLI 명령어를 사용할 수 있게 한다.
+
+```bash
+npm install -g openclaw
+openclaw help # 설치 확인
+```
+
+## 3단계: 에이전트의 얼굴 만들기 (Discord Bot)
+
+에이전트와 대화할 통로가 필요하다. OpenClaw는 텔레그램, 슬랙 등 다양한 채널을 지원하지만, 나는 개발자에게 친숙한 디스코드를 선택했다.
+
+1. Discord Developer Portal에 접속해 새 애플리케이션을 만든다.
+2. Bot 탭에서 Message Content Intent와 Server Members Intent를 반드시 활성화해야 한다. (이거 안 하면 에이전트가 내 메시지를 읽지 못하는 불상사가 발생한다.)
+3. 봇 토큰(Token)을 잘 보관해두자.
+
+## 4단계: 게이트웨이 설정 (The openclaw.json)
+
+이제 맥미니의 ~/.openclaw/openclaw.json 파일을 열어 설정을 진행한다. 백엔드 개발자라면 JSON5 형식이 반가울 것이다.
+
+```json5
+{
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "token": "YOUR_DISCORD_BOT_TOKEN"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "google-antigravity/gemini-3-flash" // 속도와 가성비의 끝판왕
+    }
+  }
+}
+```
+
+간단하게 봇 토큰만 넣어도 절반은 끝난 셈이다. 여기서 openclaw gateway start를 입력하면 맥미니가 에이전트 서버로서 첫 숨을 쉰다.
+
+## 5단계: 24시간 무중단 운영 (Keep it Alive)
+
+서버가 재부팅되어도 에이전트가 자동으로 살아나야 한다. 나는 pm2를 사용해 프로세스를 관리한다.
+
+```bash
+npm install -g pm2
+pm2 start "openclaw gateway run" --name "geujjak-gateway"
+pm2 save
+pm2 startup
+```
+
+이제 내 맥미니는 내가 잠든 사이에도 주식 시장을 감시하고, 블로그 글감을 찾아 헤매는 든든한 서버가 되었다.
+
+## 6단계: 외부 접근 (Tailscale의 마법)
+
+집 밖에서도 에이전트와 대화하고 싶다면 Tailscale을 추천한다. 복잡한 포트 포워딩 없이도 안전하게 맥미니 노드에 접근할 수 있다. OpenClaw 설정에서 gateway.tailscale.mode: "on"을 켜주기만 하면 끝이다.
+
+---
+
+## 마치며
+
+세팅 자체는 생각보다 간단하다. 하지만 이 작은 맥미니가 가져다주는 변화는 엄청나다. 이제 내 에이전트들은 단순한 챗봇이 아니라, 내 맥미니의 파일 시스템을 뒤지고, 터미널 명령을 수행하며, 실질적인 업무를 처리하는 진짜 팀원이 되었다.
+
+다음 글에서는 이 에이전트 팀이 실제로 어떻게 협업하여 주식 자동 매매 시스템을 돌리고 있는지, 그 구체적인 로직과 프롬프트 엔지니어링 기법을 다뤄보겠다.
+
+에너지 넘치는 맥미니와 함께, 여러분도 자신만의 에이전트 팀을 꾸려보길 바란다.
+
+---
+
+관련 리소스:
+- [Discord Developer Portal](https://discord.com/developers/applications)
+- [PM2 Process Manager](https://pm2.keymetrics.io/)
+- [Tailscale](https://tailscale.com/)
