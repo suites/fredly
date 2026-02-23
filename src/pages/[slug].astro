@@ -7,8 +7,9 @@ import { extractDescription } from '@/utils/markdown';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
+  const koPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) !== 'en');
   
-  return posts.map((post) => {
+  return koPosts.map((post) => {
     // 우리 스타일의 slug 필드를 우선 사용, 없으면 id에서 추출
     const slug = getPostRouteSlug(post);
     

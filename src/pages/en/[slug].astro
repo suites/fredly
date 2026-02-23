@@ -1,0 +1,50 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BlogPost from '@/layouts/BlogPost.astro';
+import { getPostRouteSlug } from '@/utils/post-route.util';
+import { extractDescription } from '@/utils/markdown';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const enPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) === 'en');
+
+  return enPosts
+    .map((post) => {
+      const slug = post.data.translationKey || getPostRouteSlug(post);
+
+      if (!slug) {
+        console.warn(`Post ${post.id} has no valid slug`);
+        return null;
+      }
+
+      return {
+        params: { slug },
+        props: { post },
+      };
+    })
+    .filter(Boolean);
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+const readTime = Math.ceil(post.body.split(/\s+/).length / 200);
+const seoDescription = post.data.description || extractDescription(post.body);
+
+let ogImage: string | undefined = undefined;
+
+if (post.data.heroImage) {
+  ogImage = undefined;
+} else {
+  ogImage = '/images/ogp.png';
+}
+---
+
+<BlogPost {...post.data} headings={headings} readTime={readTime} ogImage={ogImage} ogDescription={seoDescription}>
+  <Content />
+</BlogPost>

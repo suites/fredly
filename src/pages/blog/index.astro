@@ -10,7 +10,8 @@ import { sortByDate } from '@/utils/date';
 
 // 모든 블로그 포스트 가져오기
 const posts = await getCollection('blog');
-const sortedPosts = sortByDate(posts);
+const koPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) !== 'en');
+const sortedPosts = sortByDate(koPosts);
 
 const pageTitle = '블로그';
 const pageDescription = `${SITE_TITLE}의 모든 포스트를 확인해보세요.`;

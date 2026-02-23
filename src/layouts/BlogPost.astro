@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from './Layout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
@@ -10,6 +10,7 @@ import { formatDate } from '@/utils/date';
 import { twemojiParse } from '@/utils/twemoji.util';
 import { SITE_URL } from '@/consts';
 import Giscus from '@/components/Giscus.astro';
+import { getPostRouteSlug } from '@/utils/post-route.util';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: Array<{ depth: number; slug: string; text: string }>;
@@ -32,16 +33,41 @@ const postDate = formatDate(postDateValue);
 const estimatedReadTime = readTime || 5;
 
 // 포스트 URL (canonical URL 및 SEO용)
-const slug = ('slug' in otherProps ? otherProps.slug : null) || Astro.url.pathname;
-const postUrl = `${SITE_URL}${slug}`;
+const rawSlug = ('slug' in otherProps ? otherProps.slug : null) || Astro.url.pathname;
+const slug = String(rawSlug).replace(/^\/+|\/+$/g, '');
+const locale = ('locale' in otherProps && otherProps.locale) ? otherProps.locale : 'ko';
+const translationKey = ('translationKey' in otherProps ? otherProps.translationKey : null) || null;
+const normalizedTranslationKey = translationKey ? String(translationKey).replace(/^\/+|\/+$/g, '') : null;
+const routeSlug = locale === 'en' ? (normalizedTranslationKey || slug) : slug;
+const postPath = locale === 'en' ? `/en/${routeSlug}/` : `/${routeSlug}/`;
+const postUrl = new URL(postPath, SITE_URL).toString();
 
 const heroImage = 'heroImage' in otherProps ? otherProps.heroImage : undefined;
 const resolvedHeroImage = heroImage && typeof heroImage === 'object' && 'src' in heroImage ? heroImage.src : heroImage;
 const finalOgImage = propOgImage || resolvedHeroImage;
 const seoDescription = ogDescription || description;
+
+const alternates: Array<{ hreflang: string; href: string }> = [];
+if (translationKey) {
+  const allPosts = await getCollection('blog');
+  const translatedPosts = allPosts.filter((post) => post.data.translationKey === translationKey);
+
+  for (const post of translatedPosts) {
+    const altLocale = post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko');
+    const altSlug = getPostRouteSlug(post);
+    const altRouteSlug = altLocale === 'en' ? (post.data.translationKey || altSlug) : altSlug;
+    const altPath = altLocale === 'en' ? `/en/${altRouteSlug}/` : `/${altRouteSlug}/`;
+    alternates.push({ hreflang: altLocale, href: new URL(altPath, SITE_URL).toString() });
+  }
+
+  const xDefault = alternates.find((alt) => alt.hreflang === 'en') || alternates[0];
+  if (xDefault) {
+    alternates.push({ hreflang: 'x-default', href: xDefault.href });
+  }
+}
 ---
 
-<Layout title={title} description={seoDescription} image={finalOgImage} canonical={postUrl} type="article">
+<Layout title={title} description={seoDescription} image={finalOgImage} canonical={postUrl} type="article" lang={locale} alternates={alternates}>
   <Header />
   
   <main id="main-content" class="blog-post-layout">

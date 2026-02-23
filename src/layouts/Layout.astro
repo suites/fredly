@@ -7,9 +7,11 @@ import '@/styles/global.css';
 export interface Props extends LayoutProps {
   canonical?: string;
   robots?: string;
+  lang?: 'ko' | 'en';
+  alternates?: Array<{ hreflang: string; href: string }>;
 }
 
-const { title, description, image, canonical, robots, type } = Astro.props;
+const { title, description, image, canonical, robots, type, lang = 'ko', alternates = [] } = Astro.props;
 
 // SEO 메타데이터 생성
 // const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -37,7 +39,7 @@ const schemaJSON = JSON.stringify(schema);
 ---
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang={lang}>
   <head>
 <!-- Google tag (gtag.js) -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-SW5FVX2HVJ"></script>
@@ -65,6 +67,9 @@ const schemaJSON = JSON.stringify(schema);
     <!-- SEO Meta Tags -->
     <title>{seo.title}</title>
     <link rel="canonical" href={seo.canonical} />
+    {alternates.map((alternate) => (
+      <link rel="alternate" hreflang={alternate.hreflang} href={alternate.href} />
+    ))}
     
     <!-- Open Graph -->
     <meta property="og:type" content={seo.type} />

@@ -22,6 +22,8 @@ const blog = defineCollection({
         .optional(),
       emoji: z.string().optional(),
       slug: z.string().optional(),
+      locale: z.enum(['ko', 'en']).optional(),
+      translationKey: z.string().optional(),
       // 기본 템플릿 호환 필드들 (더 유연하게)
       pubDate: z
         .union([z.string(), z.date()])

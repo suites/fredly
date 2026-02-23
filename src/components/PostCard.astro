@@ -18,13 +18,16 @@ const date = ('date' in data ? data.date : null) || data.pubDate || new Date();
 const category = 'category' in data ? data.category : null;
 const emoji = ('emoji' in data ? data.emoji : null) || '📝';
 const slug = getPostRouteSlug(post);
+const locale = post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko');
+const routeSlug = locale === 'en' ? (post.data.translationKey || slug) : slug;
+const postPath = locale === 'en' ? `/en/${routeSlug}/` : `/${routeSlug}/`;
 
 // 이모지 파싱
 const parsedEmoji = twemojiParse(emoji);
 ---
 
 <div class="post-card-wrapper">
-  <a href={`/${slug}/`} class="post-card-link">
+  <a href={postPath} class="post-card-link">
     <div class="post-card-emoji" set:html={parsedEmoji}></div>
     <div class="post-card-content">
       <h3>{title}</h3>

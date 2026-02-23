@@ -5,11 +5,12 @@ import { getPostRouteSlug } from '../utils/post-route.util';
 
 export async function GET(context) {
   const posts = await getCollection('blog');
+  const koPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) !== 'en');
   return rss({
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     site: context.site,
-    items: posts.map((post) => {
+    items: koPosts.map((post) => {
       const slug = getPostRouteSlug(post);
       const date = post.data.date || post.data.pubDate;
 
