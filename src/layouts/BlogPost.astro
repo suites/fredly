@@ -11,6 +11,7 @@ import { twemojiParse } from '@/utils/twemoji.util';
 import { SITE_URL } from '@/consts';
 import Giscus from '@/components/Giscus.astro';
 import { getPostRouteSlug } from '@/utils/post-route.util';
+import { getPostLocale } from '@/utils/translation-map.util';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: Array<{ depth: number; slug: string; text: string }>;
@@ -53,7 +54,7 @@ if (translationKey) {
   const translatedPosts = allPosts.filter((post) => post.data.translationKey === translationKey);
 
   for (const post of translatedPosts) {
-    const altLocale = post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko');
+    const altLocale = getPostLocale(post);
     const altSlug = getPostRouteSlug(post);
     const altRouteSlug = altLocale === 'en' ? (post.data.translationKey || altSlug) : altSlug;
     const altPath = altLocale === 'en' ? `/en/${altRouteSlug}/` : `/${altRouteSlug}/`;

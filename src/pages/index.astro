@@ -5,17 +5,46 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import Bio from '@/components/Bio.astro';
 import PostCard from '@/components/PostCard.astro';
-import { SITE_DESCRIPTION } from '@/consts';
+import { SITE_DESCRIPTION, SITE_URL } from '@/consts';
 import { sortByDate } from '@/utils/date';
+import { getLocalizedPostList } from '@/utils/translation-map.util';
 
-// 모든 블로그 포스트 가져오기 (기본 홈은 KO만 노출)
 const posts = await getCollection('blog');
-const koPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) !== 'en');
-const sortedPosts = sortByDate(koPosts);
+const koFirstPosts = getLocalizedPostList(posts, 'ko');
+const sortedPosts = sortByDate(koFirstPosts);
+
+const canonical = new URL('/', SITE_URL).toString();
+const alternates = [
+  { hreflang: 'ko', href: canonical },
+  { hreflang: 'en', href: new URL('/en/', SITE_URL).toString() },
+  { hreflang: 'x-default', href: canonical },
+];
 ---
 
-<Layout title="The Gradient of Logic" description={SITE_DESCRIPTION}>
+<Layout title="The Gradient of Logic" description={SITE_DESCRIPTION} canonical={canonical} lang="ko" alternates={alternates}>
   <Header />
+
+  <script is:inline>
+    (() => {
+      const KEY = 'fredly-en-home-redirected';
+      try {
+        if (localStorage.getItem(KEY)) return;
+
+        const isBot = /bot|crawler|spider|crawling|google|bing|yandex|duckduck|baidu/i.test(
+          navigator.userAgent || ''
+        );
+        if (isBot) return;
+
+        const lang = (navigator.language || '').toLowerCase();
+        if (lang.startsWith('en')) {
+          localStorage.setItem(KEY, '1');
+          window.location.replace('/en/');
+        }
+      } catch {
+        // ignore redirect failure
+      }
+    })();
+  </script>
   
   <div class="content-wrapper">
     <div class="layout-content">

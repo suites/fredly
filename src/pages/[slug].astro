@@ -4,10 +4,11 @@ import type { CollectionEntry } from 'astro:content';
 import BlogPost from '@/layouts/BlogPost.astro';
 import { getPostRouteSlug } from '@/utils/post-route.util';
 import { extractDescription } from '@/utils/markdown';
+import { getPostLocale } from '@/utils/translation-map.util';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  const koPosts = posts.filter((post) => (post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko')) !== 'en');
+  const koPosts = posts.filter((post) => getPostLocale(post) !== 'en');
   
   return koPosts.map((post) => {
     // 우리 스타일의 slug 필드를 우선 사용, 없으면 id에서 추출

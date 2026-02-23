@@ -13,7 +13,7 @@ import { SITE_URL } from '@/consts';
 export async function getStaticPaths() {
   const categorySlugs = getAllCategorySlugs();
   const posts = await getCollection('blog');
-  
+
   return categorySlugs.map((slug) => {
     const categoryPosts = posts.filter(
       (post) => 'category' in post.data && post.data.category === slug
@@ -38,51 +38,41 @@ const { posts, categorySlug } = Astro.props;
 const categoryInfo = getCategoryBySlug(categorySlug);
 const categoryName = categoryInfo?.name || categorySlug;
 
-// 날짜순 정렬 (KO 우선, 없으면 EN fallback)
-const sortedPosts = sortByDate(getLocalizedPostList(posts, 'ko'));
+const sortedPosts = sortByDate(getLocalizedPostList(posts, 'en'));
 
-// 페이지 타이틀과 설명
-const pageTitle = `${categoryName} 카테고리`;
-const pageDescription = `${categoryName} 관련 포스트들을 확인해보세요.`;
-const canonical = new URL(`/category/${categorySlug}/`, SITE_URL).toString();
+const pageTitle = `${categoryName} Category`;
+const pageDescription = `Explore posts in ${categoryName}.`;
+const canonical = new URL(`/en/category/${categorySlug}/`, SITE_URL).toString();
 const alternates = [
-  { hreflang: 'ko', href: canonical },
-  { hreflang: 'en', href: new URL(`/en/category/${categorySlug}/`, SITE_URL).toString() },
-  { hreflang: 'x-default', href: canonical },
+  { hreflang: 'ko', href: new URL(`/category/${categorySlug}/`, SITE_URL).toString() },
+  { hreflang: 'en', href: canonical },
+  { hreflang: 'x-default', href: new URL(`/category/${categorySlug}/`, SITE_URL).toString() },
 ];
 ---
 
-<Layout title={pageTitle} description={pageDescription} canonical={canonical} lang="ko" alternates={alternates}>
+<Layout title={pageTitle} description={pageDescription} canonical={canonical} lang="en" alternates={alternates}>
   <Header />
-  
+
   <div class="content-wrapper">
     <div class="layout-content">
       <main class="main-wrapper">
-        
-        <!-- 카테고리 제목 (Gatsby 원본 스타일) -->
         <h1 class="category-heading">{categoryName}</h1>
-        
-        <!-- 포스트 목록 -->
+
         {sortedPosts.length > 0 ? (
-          sortedPosts.map((post) => (
-            <PostCard post={post} />
-          ))
+          sortedPosts.map((post) => <PostCard post={post} />)
         ) : (
-          <p class="no-posts">아직 포스트가 없습니다.</p>
+          <p class="no-posts">No posts yet.</p>
         )}
       </main>
-      
+
       <Bio />
     </div>
   </div>
-  
+
   <Footer />
 </Layout>
 
 <style>
-  /* content-wrapper, layout-content, main-wrapper는 global.css에서 통일 관리 */
-  
-  /* Gatsby 원본 헤딩 스타일 */
   .category-heading {
     margin: 0.5em 0 0.8em;
     font-size: 32px;
@@ -91,16 +81,14 @@ const alternates = [
     line-height: 44px;
     letter-spacing: 1px;
   }
-  
-  /* posts-list는 global.css에서 통일 관리 */
-  
+
   .no-posts {
     padding: 4rem 0;
     text-align: center;
     color: rgba(255, 255, 255, 0.5);
     font-size: 1.1rem;
   }
-  
+
   @media (max-width: 768px) {
     .category-heading {
       font-size: 28px;

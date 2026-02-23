@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import Bio from '@/components/Bio.astro';
+import PostCard from '@/components/PostCard.astro';
+import { SITE_DESCRIPTION, SITE_URL } from '@/consts';
+import { sortByDate } from '@/utils/date';
+import { getLocalizedPostList } from '@/utils/translation-map.util';
+
+const posts = await getCollection('blog');
+const enFirstPosts = getLocalizedPostList(posts, 'en');
+const sortedPosts = sortByDate(enFirstPosts);
+
+const canonical = new URL('/en/', SITE_URL).toString();
+const alternates = [
+  { hreflang: 'ko', href: new URL('/', SITE_URL).toString() },
+  { hreflang: 'en', href: canonical },
+  { hreflang: 'x-default', href: new URL('/', SITE_URL).toString() },
+];
+---
+
+<Layout title="The Gradient of Logic" description={SITE_DESCRIPTION} canonical={canonical} lang="en" alternates={alternates}>
+  <Header />
+
+  <div class="content-wrapper">
+    <div class="layout-content">
+      <main class="main-wrapper">
+        {sortedPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </main>
+      
+      <Bio />
+    </div>
+  </div>
+  
+  <Footer />
+</Layout>
+
+<style>
+  /* content-wrapper, layout-content, main-wrapper는 global.css에서 통일 관리 */
+</style>

@@ -4,6 +4,7 @@ import { getPostRouteSlug } from '@/utils/post-route.util';
 import CategoryLabel from './CategoryLabel.astro';
 import FormattedDate from './FormattedDate.astro';
 import { twemojiParse } from '@/utils/twemoji.util';
+import { getPostLocale } from '@/utils/translation-map.util';
 
 export interface Props {
   post: BlogPost;
@@ -18,7 +19,7 @@ const date = ('date' in data ? data.date : null) || data.pubDate || new Date();
 const category = 'category' in data ? data.category : null;
 const emoji = ('emoji' in data ? data.emoji : null) || '📝';
 const slug = getPostRouteSlug(post);
-const locale = post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko');
+const locale = getPostLocale(post);
 const routeSlug = locale === 'en' ? (post.data.translationKey || slug) : slug;
 const postPath = locale === 'en' ? `/en/${routeSlug}/` : `/${routeSlug}/`;
 
