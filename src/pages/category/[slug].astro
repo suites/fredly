@@ -13,9 +13,10 @@ export async function getStaticPaths() {
   const posts = await getCollection('blog');
   
   return categorySlugs.map((slug) => {
-    // 해당 카테고리의 포스트만 필터링
+    // 해당 카테고리의 KO 포스트만 필터링
     const categoryPosts = posts.filter((post) => {
-      return 'category' in post.data && post.data.category === slug;
+      const locale = post.data.locale || (post.id.includes('-en/') ? 'en' : 'ko');
+      return locale !== 'en' && 'category' in post.data && post.data.category === slug;
     });
     
     return {
